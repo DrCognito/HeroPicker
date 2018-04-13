@@ -1,0 +1,107 @@
+<head>
+    <link rel="stylesheet" type="text/css" href="index.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+    <link rel="stylesheet" type="text/css" href="assets/stylesheets/dota2minimapheroes.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <style>
+            #sorters, #notused{ list-style-type: none; margin: 0; float: inherit; margin-right: 10px; background: #eee; padding: 5px; width: 143px;}
+            #sorters li, #notused li{ margin: 5px; padding: 5px; font-size: 1.2em; width: 120px; }
+            /* li { list-style-type: none; } */
+    </style>
+    <script>
+        var regedSortFuncs = {}
+        function sortInObj(a, b, attrib){
+            if(a[attrib] > b[attrib]){
+                return -1
+            }
+            if(a[attrib] < b[attrib]){
+                return 1
+            }
+            return 0
+        }
+        function propComparator(prop) {
+            return function(a, b) {
+                return a[prop] - b[prop];
+            }
+        }
+        function sortHeroes(){
+            var sortby = $("#sorters").children('.sorter').get();
+            var hero_list = $("#hero_list").children('li').get()
+
+            function multiSort(a,b,sortby){
+                //console.log(sortby)
+                var prop_a = $("#"+a.id).data("data");
+                var prop_b = $("#"+b.id).data("data");
+                
+                for (const sorter of sortby){
+                    var propName = sorter.getAttribute("propname")
+                    //console.log(prop_a[propName], prop_b[propName])
+                    //console.log(propName)
+                    if(prop_a[propName] == prop_b[propName]){
+                        continue;
+                    }
+                    return prop_b[propName] - prop_a[propName]
+                }
+                //Fully equal under sort
+                return 0
+            }
+            hero_list.sort(function(a,b){return multiSort(a,b,sortby)})
+            $.each(hero_list, function(idx, itm) { $("#hero_list").append(itm); });
+        }
+
+        $( function() { 
+            $.getJSON("dataFull.json", buildList);
+            $( "#notused" ).sortable({
+                connectWith: ".connectedSortable"
+            });
+            $( "#sorters" ).sortable({
+                connectWith: ".connectedSortable",
+                update: function(event, ui) {
+                  sortHeroes()
+                },
+            });
+        } );
+        function buildList(json){
+            for (const hero in json){
+                var cName = hero.toLowerCase();
+                //console.log(cName)
+                var imgName = "d2mh " + cName;
+                var html = "<li><i class = '" + imgName + "'></i></li>";
+                $(html).appendTo("#hero_list").attr("id", cName);
+                //Add the other info from the json
+                console.log(json[hero])
+                $("#" + cName).data("data",json[hero]);
+                //test = $("#" + cName).data("data")['Team Fight']
+                // console.log(test)
+            }
+            //Make a list of properties to sort by assuming the first hero has all the options
+            for (const hero in json){
+                for (const property in json[hero]){
+                    regedSortFuncs[property] = function(a,b){return sortInObj(a,b,property)};
+                    //sortFunc = propComparator(property);
+                    var id = "sort" + property.replace(/\s+/g, '');
+                    var html = "<li class='ui-state-default sorter'>"+ property +"</li>";
+                    $(html).appendTo("#notused").attr("id", id).attr("propName", property);
+                    //$(html).appendTo("#notused").attr("id", id);
+                }
+                break;
+            }
+        }
+    </script>
+</head>
+<body>
+    <div class="sidebar">
+        Sort by:
+        <ul id="sorters" class="connectedSortable">
+            <!-- <li>Arr</li> -->
+        </ul>
+        Not applied:
+        <ul id="notused" class="connectedSortable">
+        </ul>
+    </div>
+    <div class="content">
+        <ul id="hero_list">
+        </ul>
+    </div>
+</body>
