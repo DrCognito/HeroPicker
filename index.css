@@ -33,5 +33,5 @@ body{
     font-size: 4em;
     text-align: center;
 }
-#sorters, #notused, { list-style-type: none; margin: 0; float: left; margin-right: 10px; background: #eee; padding: 5px; width: 143px;}
-#sorters li, #notused li, { margin: 5px; padding: 5px; font-size: 1.2em; width: 120px; }
+#sorters, #notused { list-style-type: none; margin: 0; float: left; margin-right: 10px; background: #eee; padding: 5px; width: 143px;}
+#sorters li, #notused li { margin: 5px; padding: 5px; font-size: 1.2em; width: 120px; }
