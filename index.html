@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="en">
 <head>
+    <meta charset="utf-8"/>
     <link rel="stylesheet" type="text/css" href="index.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
@@ -72,7 +73,7 @@
                 var html = "<li><i class = '" + imgName + "'></i></li>";
                 $(html).appendTo("#hero_list").attr("id", cName);
                 //Add the other info from the json
-                console.log(json[hero])
+                //console.log(json[hero])
                 $("#" + cName).data("data",json[hero]);
                 //test = $("#" + cName).data("data")['Team Fight']
                 // console.log(test)
