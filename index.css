@@ -19,7 +19,28 @@ body{
     width: 1000px;
     margin-left:160px
 }
-
+.content-footer-left{
+    float: left;
+    position: relative;
+    width:50%;
+    top:0;
+    left:0
+}
+.content-footer-right{
+    float: left;
+    position: relative;
+    width:50%;
+    top:0;
+    /* left:50% */
+}
+.pick{
+    background:green;
+    height:50px
+}
+.ban{
+    background: red;
+    height:50px
+}
 #hero_list{
     list-style-type: none;
     margin: 0;
@@ -35,3 +56,39 @@ body{
 }
 #sorters, #notused { list-style-type: none; margin: 0; float: left; margin-right: 10px; background: #eee; padding: 5px; width: 143px;}
 #sorters li, #notused li { margin: 5px; padding: 5px; font-size: 1.2em; width: 120px; }
+
+.graphs{
+    width:100px;
+}
+
+.pickban{
+    /* list-style-type: none;
+    margin: 0; */
+    /* float: left; */
+    /* margin-right: 0px;
+    background: #eee; */
+    padding: 9px;
+    /* background: darkturquoise; */
+    /* width: 143px;
+    text-align: center; */
+}
+
+.pickban li {
+    /* 
+    padding: 1px;
+    width: 40px; height: 40px;
+    font-size: 4em; */
+    display: inline;
+    /* float: left; */
+    /* padding: 40px; */
+    text-align: center;
+    padding: 3px;
+    margin: 3px 3px 3px 0;
+}
+
+.hero-highlight{
+    border: 1px solid red;
+    width: 40px;
+    height: 40px;
+    background-color: lightblue;
+}

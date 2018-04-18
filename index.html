@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
     <link rel="stylesheet" type="text/css" href="assets/stylesheets/dota2minimapheroes.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <style>
             #sorters, #notused{ list-style-type: none; margin: 0; float: inherit; margin-right: 10px; background: #eee; padding: 5px; width: 143px;}
             #sorters li, #notused li{ margin: 5px; padding: 5px; font-size: 1.2em; width: 120px; }
@@ -14,6 +15,8 @@
     </style>
     <script>
         var regedSortFuncs = {}
+        var allProps = {};
+        var skipProps = ["In our pool",];
         function sortInObj(a, b, attrib){
             if(a[attrib] > b[attrib]){
                 return -1
@@ -33,14 +36,11 @@
             var hero_list = $("#hero_list").children('li').get()
 
             function multiSort(a,b,sortby){
-                //console.log(sortby)
                 var prop_a = $("#"+a.id).data("data");
                 var prop_b = $("#"+b.id).data("data");
                 
                 for (const sorter of sortby){
                     var propName = sorter.getAttribute("propname")
-                    //console.log(prop_a[propName], prop_b[propName])
-                    //console.log(propName)
                     if(prop_a[propName] == prop_b[propName]){
                         continue;
                     }
@@ -64,7 +64,49 @@
                   sortHeroes()
                 },
             });
+            $("#hero_list").sortable({
+                connectWith: ".connectedHeroes",
+                placeholder: ".hero-highlight"
+            })
+            $(".pickban").sortable(
+                {
+                connectWith: ".connectedHeroes",
+                placeholder: "hero-highlight",
+                update: function(event, ui){updatePBChart(event);}
+            })
+            google.charts.load('current', {packages: ['corechart', 'bar']});
         } );
+        function updatePBChart(event){
+            console.log("Updated: ", event.target)
+            var $target = $(event.target);
+            var heroes = $target.children();
+            //Jquery javascript method for creating a clone
+            //console.log(heroes);
+            var clone = $.extend({}, allProps);
+            heroes.each(function(i, elem){
+                console.log(elem)
+                var hData = $(elem).data("data")
+                for (const prop in allProps){
+                    console.log(hData);
+                    clone[prop] += hData[prop];
+                }
+            })
+            var data = new google.visualization.DataTable();
+            data.addColumn('string','Category');
+            data.addColumn('number','Rating');
+            for (const prop in clone){
+                data.addRow([prop, clone[prop]]);
+            }
+            // for (const h in heroes){
+            //     hData = $(h).data("data")
+            //     console.log($(h));
+                
+            // }
+            $target.data("graph", data)
+            var chart = new google.visualization.BarChart(document.getElementById('lpickgraph'));
+            chart.draw(data);
+            console.log("New graph:", $target.data("graph"))
+        }
         function buildList(json){
             for (const hero in json){
                 var cName = hero.toLowerCase();
@@ -82,30 +124,55 @@
             for (const hero in json){
                 for (const property in json[hero]){
                     regedSortFuncs[property] = function(a,b){return sortInObj(a,b,property)};
-                    //sortFunc = propComparator(property);
                     var id = "sort" + property.replace(/\s+/g, '');
                     var html = "<li class='ui-state-default sorter'>"+ property +"</li>";
                     $(html).appendTo("#notused").attr("id", id).attr("propName", property);
-                    //$(html).appendTo("#notused").attr("id", id);
+                    //Also add to the picks and bans for graphing
+                    if ($.inArray(property, skipProps) == 0){
+                        continue;
+                    }
+                    allProps[property] = 0;
                 }
+                // var footers = $(".pick, .ban").children();
+                // $.each(footers, function(i, val){$.data(val, "graph", allProps);});
                 break;
             }
+            //Reposition the footers so they are after the list
+            positionFooterVert()
         }
     </script>
 </head>
 <body>
     <div class="sidebar">
         Sort by:
-        <ul id="sorters" class="connectedSortable">
-            <!-- <li>Arr</li> -->
-        </ul>
+        <ul id="sorters" class="connectedSortable"></ul>
         Not applied:
-        <ul id="notused" class="connectedSortable">
-        </ul>
+        <ul id="notused" class="connectedSortable"></ul>
     </div>
     <div class="content">
-        <ul id="hero_list">
-        </ul>
+        <div id="htest">
+            <ul id="hero_list" class="connectedHeroes"></ul>
+        </div>
+        <div style="clear: both;"></div>
+        <div id="pb_footer" position=fixed>
+            <div class="content-footer-left">
+                <div class="pick">
+                    <ul id="lpick" class="connectedHeroes pickban"></ul>
+                    <div class='graphs' id="lpickgraph"></div>
+                </div>
+                <div class="ban">
+                    <ul id="lban" class="connectedHeroes pickban"></ul>
+                </div>
+            </div>
+            <div class="content-footer-right">
+                <div class="pick">
+                    <ul id="rpick" class="connectedHeroes pickban"></ul>
+                </div>
+                <div class="ban">
+                    <ul id="rban" class="connectedHeroes pickban"></ul>
+                </div>
+            </div>
+        </div>
     </div>
 </body>
 </html>
