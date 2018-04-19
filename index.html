@@ -17,6 +17,8 @@
         var regedSortFuncs = {}
         var allProps = {};
         var skipProps = ["In our pool",];
+        var chartOptions = {chartArea:{width:'30%'},
+                            legend: {position: 'none'}};
         function sortInObj(a, b, attrib){
             if(a[attrib] > b[attrib]){
                 return -1
@@ -71,23 +73,34 @@
             $(".pickban").sortable(
                 {
                 connectWith: ".connectedHeroes",
-                placeholder: "hero-highlight",
+                // placeholder: "hero-highlight",
                 update: function(event, ui){updatePBChart(event);}
             })
             google.charts.load('current', {packages: ['corechart', 'bar']});
+            google.charts.setOnLoadCallback(drawBasic);
         } );
+        function drawBasic(){
+            //Load in some zero charts
+            var data = new google.visualization.DataTable();
+            data.addColumn('string','Category');
+            data.addColumn('number','Rating');
+            for (const prop in allProps){
+                data.addRow([prop, allProps[prop]]);
+            }
+            $(".graphs").each(function(i,elem){
+                var chart = new google.visualization.BarChart(elem);
+                chart.draw(data, chartOptions);
+            });
+        }
         function updatePBChart(event){
-            console.log("Updated: ", event.target)
             var $target = $(event.target);
             var heroes = $target.children();
             //Jquery javascript method for creating a clone
             //console.log(heroes);
             var clone = $.extend({}, allProps);
             heroes.each(function(i, elem){
-                console.log(elem)
                 var hData = $(elem).data("data")
                 for (const prop in allProps){
-                    console.log(hData);
                     clone[prop] += hData[prop];
                 }
             })
@@ -97,15 +110,9 @@
             for (const prop in clone){
                 data.addRow([prop, clone[prop]]);
             }
-            // for (const h in heroes){
-            //     hData = $(h).data("data")
-            //     console.log($(h));
-                
-            // }
             $target.data("graph", data)
-            var chart = new google.visualization.BarChart(document.getElementById('lpickgraph'));
-            chart.draw(data);
-            console.log("New graph:", $target.data("graph"))
+            var chart = new google.visualization.BarChart($target.siblings(".graphs")[0]);
+            chart.draw(data, chartOptions);
         }
         function buildList(json){
             for (const hero in json){
@@ -138,7 +145,6 @@
                 break;
             }
             //Reposition the footers so they are after the list
-            positionFooterVert()
         }
     </script>
 </head>
@@ -152,24 +158,28 @@
     <div class="content">
         <div id="htest">
             <ul id="hero_list" class="connectedHeroes"></ul>
+            <!-- <span class="clear"></span> -->
         </div>
         <div style="clear: both;"></div>
-        <div id="pb_footer" position=fixed>
+        <div id="pb_footer">
             <div class="content-footer-left">
                 <div class="pick">
                     <ul id="lpick" class="connectedHeroes pickban"></ul>
-                    <div class='graphs' id="lpickgraph"></div>
+                    <div class='connectedHeroes graphs' id="lpickgraph"></div>
                 </div>
                 <div class="ban">
                     <ul id="lban" class="connectedHeroes pickban"></ul>
+                    <div class='connectedHeroes graphs' id="lbangraph"></div>
                 </div>
             </div>
             <div class="content-footer-right">
                 <div class="pick">
                     <ul id="rpick" class="connectedHeroes pickban"></ul>
+                    <div class='graphs' id="rpickgraph"></div>
                 </div>
                 <div class="ban">
                     <ul id="rban" class="connectedHeroes pickban"></ul>
+                    <div class='graphs' id="rbangraph"></div>
                 </div>
             </div>
         </div>
