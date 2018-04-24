@@ -92,6 +92,24 @@
                 // placeholder: "hero-highlight",
                 update: function(event, ui){updatePBChart(event);}
             })
+            //Setup hero tooltips.
+            $(document).tooltip({
+                items: ".d2mh",
+                content:function(){
+                    var data = $(this).parent().data("data");
+                    var hero = $(this).parent().data("hero");
+                    var html = "<table>\n";
+                    html += "<tr><th colspan='2'>" + hero + "</th></tr>\n";
+                    for (const prop in data){
+                        html += "<tr>\n"
+                        html += "<td>" + prop + "</td>\n"
+                        html += "<td align='right'>" + data[prop] + "</td>\n"
+                        html += "</tr>\n"
+                    }
+                    html += "</table>\n"
+                    return html
+                }
+            })
             //Setup google charts and draw placeholders.
             google.charts.load('current', {packages: ['corechart', 'bar']});
             google.charts.setOnLoadCallback(drawBasic);
@@ -153,6 +171,7 @@
                 //Add the other info from the json
                 //console.log(json[hero])
                 $("#" + cName).data("data",json[hero]);
+                $("#" + cName).data("hero",hero);
                 //test = $("#" + cName).data("data")['Team Fight']
                 // console.log(test)
             }
