@@ -46,11 +46,17 @@ body{
     margin: 0;
     padding: 0;
     width: 1000px;
+    background-color: white;
+}
+.hero_list_highlight{
+    background-color: yellow;
+    border-style: solid;
 }
 #htest{
     display: flex;
     margin-bottom: 20px;
     margin-top: 0;
+    height: auto;
     /* overflow: hidden; */
 }
 span.clear { clear: left; display: block; }

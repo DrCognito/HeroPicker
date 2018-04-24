@@ -8,17 +8,29 @@
     <link rel="stylesheet" type="text/css" href="assets/stylesheets/dota2minimapheroes.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/3.0.4/fuse.min.js"></script>
     <style>
             #sorters, #notused{ list-style-type: none; margin: 0; float: inherit; margin-right: 10px; background: #eee; padding: 5px; width: 143px;}
-            #sorters li, #notused li{ margin: 5px; padding: 5px; font-size: 1.2em; width: 120px; }
+            #sorters li, #notused li{ margin: 5px; padding: 5px; font-size: 1.2em; width: 120px; float: inherit;}
             /* li { list-style-type: none; } */
     </style>
     <script>
         var regedSortFuncs = {}
         var allProps = {};
         var skipProps = ["In our pool",];
+        var def_HBGcolour = "white"
+        var high_HBGcolour = "yellow"
         var chartOptions = {chartArea:{width:'30%'},
                             legend: {position: 'none'}};
+        var fuse;
+        var fuseOptions = {
+            threshold: 0.1,
+            location: 0,
+            distance: 100,
+            maxPatternLength: 32,
+            minMatchCharLength: 1,
+            keys: ["id", "nicks"]
+        };
         function sortInObj(a, b, attrib){
             if(a[attrib] > b[attrib]){
                 return -1
@@ -55,8 +67,12 @@
             $.each(hero_list, function(idx, itm) { $("#hero_list").append(itm); });
         }
 
-        $( function() { 
+        $( function() {
+            //Load hero grid and setup conditions
             $.getJSON("dataFull.json", buildList);
+            //Load searchable list and init fuse
+            $.getJSON("heroSearch.json", initFuse);
+            //Setup sortable lists
             $( "#notused" ).sortable({
                 connectWith: ".connectedSortable"
             });
@@ -76,9 +92,22 @@
                 // placeholder: "hero-highlight",
                 update: function(event, ui){updatePBChart(event);}
             })
+            //Setup google charts and draw placeholders.
             google.charts.load('current', {packages: ['corechart', 'bar']});
             google.charts.setOnLoadCallback(drawBasic);
+            //Search box on update
+            $("#hsearch").on("change", function(o, a){updateHeroHigh();});
+            $("#hsearch").val("");
         } );
+        function updateHeroHigh(){
+            $(".hero_list_highlight").removeClass("hero_list_highlight")
+            var search = $("#hsearch").val()
+            var result = fuse.search(search)
+            for (const r in result){
+                var portrait = $(result[r]['id']).children(".d2mh")
+                portrait.addClass("hero_list_highlight");
+            }
+        }
         function drawBasic(){
             //Load in some zero charts
             var data = new google.visualization.DataTable();
@@ -144,7 +173,16 @@
                 // $.each(footers, function(i, val){$.data(val, "graph", allProps);});
                 break;
             }
-            //Reposition the footers so they are after the list
+            toggleHListHero("#tidehunter");
+            toggleHListHero("#timbersaw");
+            toggleHListHero("#tidehunter");
+        }
+        function initFuse(json){
+            fuse = new Fuse(json, fuseOptions);
+        }
+        function toggleHListHero(hero){
+            var portrait = $(hero).children(".d2mh")
+            portrait.toggleClass("hero_list_highlight");
         }
     </script>
 </head>
@@ -156,6 +194,7 @@
         <ul id="notused" class="connectedSortable"></ul>
     </div>
     <div class="content">
+        <input id="hsearch" type="text" style="width:100%">
         <div id="htest">
             <ul id="hero_list" class="connectedHeroes"></ul>
             <!-- <span class="clear"></span> -->
