@@ -101,8 +101,8 @@
         } );
         function updateHeroHigh(){
             $(".hero_list_highlight").removeClass("hero_list_highlight")
-            var search = $("#hsearch").val()
-            var result = fuse.search(search)
+            var search = $("#hsearch").val();
+            var result = fuse.search(search);
             for (const r in result){
                 var portrait = $(result[r]['id']).children(".d2mh")
                 portrait.addClass("hero_list_highlight");
