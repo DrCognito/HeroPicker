@@ -1,3 +1,4 @@
 *.json
 !dataFull.json
+!heroSearch.json
 UpdateJson.py
