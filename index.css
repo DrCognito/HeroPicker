@@ -1,6 +1,15 @@
 body{
     margin: 0;
     padding:0;
+    background: var(--primary);
+}
+/*Colour setups, might be a better way?*/
+:root {
+    --primary: #000000;
+    --secondary: #181818;
+    --tertiary: #303030;
+    --quaternary: #404040;
+    --quinary: #505050;
 }
 /* .sidebar, .content{
     background: #333;
@@ -10,12 +19,15 @@ body{
     border:1px solid #777;
 } */
 .sidebar{
+    background: var(--quinary);
     width: 150px;
+    height:100%;
     left:0;
     top:0;
     position: absolute;
 }
 .content{
+    background: var(--primary);
     width: 1000px;
     margin-left:160px
 }
@@ -46,26 +58,31 @@ body{
     margin: 0;
     padding: 0;
     width: 1000px;
-    background-color: white;
+    /* background-color: white; */
 }
 .hero_list_highlight{
-    background-color: yellow;
-    border-style: solid;
+    /* margin: 0px 0px 0px 0px; */
+    background-color: var(--quinary);
+    border-color: black !important;
+    /* border: 1px solid white; */
 }
 #htest{
     display: flex;
-    margin-bottom: 20px;
-    margin-top: 0;
+    margin-bottom: 5px;
+    margin-top: 5px;
     height: auto;
     /* overflow: hidden; */
 }
 span.clear { clear: left; display: block; }
 #hero_list li {
-    margin: 3px 3px 3px 3px;
-    padding: 1px; float: left;
-    width: 40px; height: 40px;
+    margin: 8px 8px 8px 8px;
+    border: 1px solid;
+    /* padding: 1px; */
+    float: left;
+    /* width: 40px; 
+    height: 40px;
     font-size: 4em;
-    text-align: center;
+    text-align: center; */
 }
 #sorters, #notused { list-style-type: none; margin: 0; float: left; margin-right: 10px; background: #eee; padding: 5px; width: 143px;}
 #sorters li, #notused li { margin: 5px; padding: 5px; font-size: 1.2em; width: 120px; }
@@ -112,4 +129,11 @@ span.clear { clear: left; display: block; }
     /* column-count: 2;
     column-gap: 5px; */
     display: flex;
+}
+
+#hsearch {
+    width:100%;
+    background: grey;
+    border: none;
+    margin: 0;
 }

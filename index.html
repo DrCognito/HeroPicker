@@ -20,8 +20,13 @@
         var skipProps = ["In our pool",];
         var def_HBGcolour = "white"
         var high_HBGcolour = "yellow"
-        var chartOptions = {chartArea:{width:'30%'},
-                            legend: {position: 'none'}};
+        var chartOptions = {chartArea:{left:'40%',width:'50%'},
+                            legend: {position: 'none'},
+                            backgroundColor:'black',
+                            vAxis:{textStyle:{ color: 'white'}},
+                            hAxis:{textStyle:{ color: 'white'}},
+                            chma:[0,0,0,0],
+                            };
         var fuse;
         var fuseOptions = {
             threshold: 0.1,
@@ -170,8 +175,9 @@
                 $(html).appendTo("#hero_list").attr("id", cName);
                 //Add the other info from the json
                 //console.log(json[hero])
+                $("#" + cName).data("hero",json[hero]['Name']);
+                delete json[hero]['Name'];
                 $("#" + cName).data("data",json[hero]);
-                $("#" + cName).data("hero",hero);
                 //test = $("#" + cName).data("data")['Team Fight']
                 // console.log(test)
             }
@@ -204,13 +210,13 @@
 </head>
 <body>
     <div class="sidebar">
-        Sort by:
+        <p style="color:white">Sort by:</p>
         <ul id="sorters" class="connectedSortable"></ul>
-        Not applied:
+        <p style="color:white">Not applied:</p>
         <ul id="notused" class="connectedSortable"></ul>
     </div>
     <div class="content">
-        <input id="hsearch" type="text" style="width:100%">
+        <input id="hsearch" type="text">
         <div id="htest">
             <ul id="hero_list" class="connectedHeroes"></ul>
             <!-- <span class="clear"></span> -->
