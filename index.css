@@ -46,12 +46,32 @@ body{
     /* left:50% */
 }
 .pick{
-    background:green;
+    background: var(--secondary);
     /* height:50px */
 }
 .ban{
-    background: red;
+    background: var(--quaternary);
     /* height:50px */
+}
+.rightbar{
+    background: var(--quinary);
+    width: 300px;
+    height:100%;
+    margin-left:1170px;
+    top:0;
+    position: absolute;
+    text-align: center;
+}
+.rightbar-title{
+    background: var(--primary);
+    color: white;
+}
+.rightbar-content{
+    height: 100px;
+    border: 1px solid white; 
+}
+.right-sect-title{
+    background: white;
 }
 #hero_list{
     list-style-type: none;
@@ -98,7 +118,7 @@ span.clear { clear: left; display: block; }
     /* margin-right: 0px;
     background: #eee; */
     padding: 0;
-    height:40px;
+    height:80px;
     /* background: darkturquoise; */
     /* width: 143px;
     text-align: center; */
@@ -129,6 +149,8 @@ span.clear { clear: left; display: block; }
     /* column-count: 2;
     column-gap: 5px; */
     display: flex;
+    color: white;
+    text-align: center;
 }
 
 #hsearch {
@@ -136,4 +158,5 @@ span.clear { clear: left; display: block; }
     background: grey;
     border: none;
     margin: 0;
+    color: white;
 }

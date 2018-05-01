@@ -10,7 +10,7 @@
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/3.0.4/fuse.min.js"></script>
     <style>
-            #sorters, #notused{ list-style-type: none; margin: 0; float: inherit; margin-right: 10px; background: #eee; padding: 5px; width: 143px;}
+            #sorters, #notused{ list-style-type: none; margin: 5; float: inherit; margin-right: 0px; background: #eee; padding: 5px; width: 140px;}
             #sorters li, #notused li{ margin: 5px; padding: 5px; font-size: 1.2em; width: 120px; float: inherit;}
             /* li { list-style-type: none; } */
     </style>
@@ -225,24 +225,56 @@
         <div id="pb_footer">
             <div class="content-footer-left">
                 <div class="pick">
+                    Pick
                     <ul id="lpick" class="connectedHeroes pickban"></ul>
                     <div class='connectedHeroes graphs' id="lpickgraph"></div>
                 </div>
                 <div class="ban">
+                    Ban
                     <ul id="lban" class="connectedHeroes pickban"></ul>
                     <div class='connectedHeroes graphs' id="lbangraph"></div>
                 </div>
             </div>
             <div class="content-footer-right">
                 <div class="pick">
+                    Opponent Pick
                     <ul id="rpick" class="connectedHeroes pickban"></ul>
                     <div class='graphs' id="rpickgraph"></div>
                 </div>
                 <div class="ban">
+                    Opponent Ban
                     <ul id="rban" class="connectedHeroes pickban"></ul>
                     <div class='graphs' id="rbangraph"></div>
                 </div>
             </div>
+        </div>
+    </div>
+    <div class="rightbar">
+        <div class="rightbar-title">For picks</div>
+        <div class="rightbar-content">
+            <div class="right-sect-title">Good VS</div>
+            <ul id="pickgvs"></ul>
+        </div>
+        <div class="rightbar-content">
+            <div class="right-sect-title">Countered By</div>
+            <ul id="pickcountered"></ul>
+        </div>
+        <div class="rightbar-content">
+            <div class="right-sect-title">Synergy With</div>
+            <ul id="picksynergy"></ul>
+        </div>
+        <div class="rightbar-title">For opponent picks</div>
+        <div class="rightbar-content">
+            <div class="right-sect-title">Good VS</div>
+            <ul id="opickgvs"></ul>
+        </div>
+        <div class="rightbar-content">
+            <div class="right-sect-title">Countered By</div>
+            <ul id="opickcountered"></ul>
+        </div>
+        <div class="rightbar-content">
+            <div class="right-sect-title">Synergy With</div>
+            <ul id="opicksynergy"></ul>
         </div>
     </div>
 </body>
