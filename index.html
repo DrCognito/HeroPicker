@@ -15,11 +15,11 @@
             /* li { list-style-type: none; } */
     </style>
     <script>
-        var regedSortFuncs = {}
+        var regedSortFuncs = {};
         var allProps = {};
         var skipProps = ["In our pool",];
-        var def_HBGcolour = "white"
-        var high_HBGcolour = "yellow"
+        var def_HBGcolour = "white";
+        var high_HBGcolour = "yellow";
         var chartOptions = {chartArea:{left:'40%',width:'50%'},
                             legend: {position: 'none'},
                             backgroundColor:'black',
@@ -28,6 +28,11 @@
                             chma:[0,0,0,0],
                             };
         var fuse;
+        var pickedHeroes = [];
+        var pickedAdvantages = {};
+        var oPickedHeroes = [];
+        var oPickedAdvantages = {};
+        var advantageCut = 5;
         var fuseOptions = {
             threshold: 0.1,
             location: 0,
@@ -74,7 +79,7 @@
 
         $( function() {
             //Load hero grid and setup conditions
-            $.getJSON("dataFull.json", buildList);
+            $.getJSON("dataFull.json", buildList).then($.getJSON("odotaAdvantages.json", appendAdvantages));
             //Load searchable list and init fuse
             $.getJSON("heroSearch.json", initFuse);
             //Setup sortable lists
@@ -95,7 +100,7 @@
                 {
                 connectWith: ".connectedHeroes",
                 // placeholder: "hero-highlight",
-                update: function(event, ui){updatePBChart(event);}
+                update: function(event, ui){updatePBChart(event); updateGoodCounterSyn(event);}
             })
             //Setup hero tooltips.
             $(document).tooltip({
@@ -166,6 +171,104 @@
             var chart = new google.visualization.BarChart($target.siblings(".graphs")[0]);
             chart.draw(data, chartOptions);
         }
+        function updateGoodCounterSyn(event){
+            console.log(event.target.id)
+            if(event.target.id == "lpick"){
+                console.log(event.target)
+                // var heroes = $(event.target).children('li');
+                var $target = $(event.target);
+                var heroes = $target.children();
+                console.log(heroes);
+                var pickedList = _updatedList(heroes, pickedHeroes);
+                
+                console.log("new h: ", pickedList.newHeroes);
+                if(pickedList.changed){
+                    for (const iH in pickedList.newHeroes){
+                        var advantages = $("#" + pickedList.newHeroes[iH]).data("adv");
+                        console.log(advantages)
+                        for (const advantage in advantages){
+                            if(advantage in pickedAdvantages){
+                                pickedAdvantages[advantage] += advantages[advantage];
+                            }
+                            else{
+                                pickedAdvantages[advantage] = advantages[advantage];
+                            }
+                        }
+                        pickedHeroes.push(pickedList.newHeroes[iH])
+                    }
+                    // Create an array from the keys and sort it by the advantage value.
+                    console.log(pickedAdvantages)
+                    var orderedList = Object.keys(pickedAdvantages).sort(function(a,b){
+                        return pickedAdvantages[b] - pickedAdvantages[a];
+                    })
+                    console.log(orderedList)
+                    _doUpdate($("#pickgvs"), orderedList.slice(0, advantageCut));
+                    _doUpdate($("#pickcountered"), orderedList.slice(-1*advantageCut).reverse());
+                }
+                // _doUpdate($("#picksynergy"), heroes, "synergy");
+            }
+            else if(event.target.id == "rpick"){
+                console.log(event.target)
+                // var heroes = $(event.target).children('li');
+                var $target = $(event.target);
+                var heroes = $target.children();
+                console.log(heroes);
+                var pickedList = _updatedList(heroes, oPickedHeroes);
+                
+                console.log("new h: ", pickedList.newHeroes);
+                if(pickedList.changed){
+                    for (const iH in pickedList.newHeroes){
+                        var advantages = $("#" + pickedList.newHeroes[iH]).data("adv");
+                        console.log(advantages)
+                        for (const advantage in advantages){
+                            if(advantage in oPickedAdvantages){
+                                oPickedAdvantages[advantage] += advantages[advantage];
+                            }
+                            else{
+                                oPickedAdvantages[advantage] = advantages[advantage];
+                            }
+                        }
+                        oPickedHeroes.push(pickedList.newHeroes[iH])
+                    }
+                    // Create an array from the keys and sort it by the advantage value.
+                    console.log(oPickedAdvantages)
+                    var orderedList = Object.keys(oPickedAdvantages).sort(function(a,b){
+                        return oPickedAdvantages[b] - oPickedAdvantages[a];
+                    })
+                    console.log(orderedList)
+                    _doUpdate($("#opickgvs"), orderedList.slice(0, advantageCut));
+                    _doUpdate($("#opickcountered"), orderedList.slice(-1*advantageCut).reverse());
+                }
+                // _doUpdate($("#opicksynergy"), heroes, "synergy");
+            }
+            function _updatedList(heroes, current){
+                var changed = false;
+                var newHeroes = new Array();
+                console.log(heroes)
+                heroes.each(function(h){
+                    var h_id = heroes[h].id;
+                    if($.inArray(h_id, current) != -1){
+                        return;
+                    }
+                    changed = true;
+                    newHeroes.push(h_id);
+                });
+                var output = {'changed': changed, 'newHeroes': newHeroes};
+                return output
+            }
+            function _doUpdate(target, advantages){
+                console.log(advantages)
+                //Empty list and add our new heroes
+                target.empty();
+                for (const h in advantages){
+                    // console.log(h)
+                    var imgName = "d2mh " + advantages[h];
+                    var html = "<li><i class = '" + imgName + "'></i></li>";
+                    $(html).appendTo(target);
+                }
+            }
+            return
+        }
         function buildList(json){
             for (const hero in json){
                 var cName = hero.toLowerCase();
@@ -197,6 +300,11 @@
                 // var footers = $(".pick, .ban").children();
                 // $.each(footers, function(i, val){$.data(val, "graph", allProps);});
                 break;
+            }
+        }
+        function appendAdvantages(json){
+            for (const hero in json){
+                $("#" + hero).data("adv", json[hero]);
             }
         }
         function initFuse(json){
@@ -253,28 +361,28 @@
         <div class="rightbar-title">For picks</div>
         <div class="rightbar-content">
             <div class="right-sect-title">Good VS</div>
-            <ul id="pickgvs"></ul>
+            <ul id="pickgvs" class="advant_lists"></ul>
         </div>
         <div class="rightbar-content">
             <div class="right-sect-title">Countered By</div>
-            <ul id="pickcountered"></ul>
+            <ul id="pickcountered" class="advant_lists"></ul>
         </div>
         <div class="rightbar-content">
             <div class="right-sect-title">Synergy With</div>
-            <ul id="picksynergy"></ul>
+            <ul id="picksynergy" class="advant_lists"></ul>
         </div>
         <div class="rightbar-title">For opponent picks</div>
         <div class="rightbar-content">
             <div class="right-sect-title">Good VS</div>
-            <ul id="opickgvs"></ul>
+            <ul id="opickgvs" class="advant_lists"></ul>
         </div>
         <div class="rightbar-content">
             <div class="right-sect-title">Countered By</div>
-            <ul id="opickcountered"></ul>
+            <ul id="opickcountered" class="advant_lists"></ul>
         </div>
         <div class="rightbar-content">
             <div class="right-sect-title">Synergy With</div>
-            <ul id="opicksynergy"></ul>
+            <ul id="opicksynergy" class="advant_lists"></ul>
         </div>
     </div>
 </body>

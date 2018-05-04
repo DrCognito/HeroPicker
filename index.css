@@ -93,6 +93,22 @@ body{
     height: auto;
     /* overflow: hidden; */
 }
+.advant_lists{
+    list-style-type: none
+}
+.advant_lists li {
+    /* 
+    padding: 1px;
+    width: 40px; height: 40px;
+    font-size: 4em; */
+    display: inline;
+    /* width: 200; */
+    /* float: left; */
+    /* padding: 40px; */
+    text-align: center;
+    padding: 0;
+    margin: 0;
+}
 span.clear { clear: left; display: block; }
 #hero_list li {
     margin: 8px 8px 8px 8px;
