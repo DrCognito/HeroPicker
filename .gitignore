@@ -1,4 +1,5 @@
 *.json
 !dataFull.json
 !heroSearch.json
+!odotaAdvantages.json
 UpdateJson.py
