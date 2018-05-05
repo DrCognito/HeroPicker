@@ -32,7 +32,7 @@
         var pickedAdvantages = {};
         var oPickedHeroes = [];
         var oPickedAdvantages = {};
-        var advantageCut = 5;
+        var advantageCut = 10;
         var fuseOptions = {
             threshold: 0.1,
             location: 0,
@@ -202,8 +202,8 @@
                         return pickedAdvantages[b] - pickedAdvantages[a];
                     })
                     console.log(orderedList)
-                    _doUpdate($("#pickgvs"), orderedList.slice(0, advantageCut));
-                    _doUpdate($("#pickcountered"), orderedList.slice(-1*advantageCut).reverse());
+                    _doUpdate($("#pickcountered"), orderedList.slice(0, advantageCut));
+                    _doUpdate($("#pickgvs"), orderedList.slice(-1*advantageCut).reverse());
                 }
                 // _doUpdate($("#picksynergy"), heroes, "synergy");
             }
@@ -236,8 +236,8 @@
                         return oPickedAdvantages[b] - oPickedAdvantages[a];
                     })
                     console.log(orderedList)
-                    _doUpdate($("#opickgvs"), orderedList.slice(0, advantageCut));
-                    _doUpdate($("#opickcountered"), orderedList.slice(-1*advantageCut).reverse());
+                    _doUpdate($("#opickcountered"), orderedList.slice(0, advantageCut));
+                    _doUpdate($("#opickgvs"), orderedList.slice(-1*advantageCut).reverse());
                 }
                 // _doUpdate($("#opicksynergy"), heroes, "synergy");
             }
@@ -360,11 +360,11 @@
     <div class="rightbar">
         <div class="rightbar-title">For picks</div>
         <div class="rightbar-content">
-            <div class="right-sect-title">Good VS</div>
+            <div class="right-sect-title">Picks Are Good VS</div>
             <ul id="pickgvs" class="advant_lists"></ul>
         </div>
         <div class="rightbar-content">
-            <div class="right-sect-title">Countered By</div>
+            <div class="right-sect-title">Picks Are Countered By</div>
             <ul id="pickcountered" class="advant_lists"></ul>
         </div>
         <div class="rightbar-content">
@@ -373,11 +373,11 @@
         </div>
         <div class="rightbar-title">For opponent picks</div>
         <div class="rightbar-content">
-            <div class="right-sect-title">Good VS</div>
+            <div class="right-sect-title">Opponents Good VS</div>
             <ul id="opickgvs" class="advant_lists"></ul>
         </div>
         <div class="rightbar-content">
-            <div class="right-sect-title">Countered By</div>
+            <div class="right-sect-title">Opponents Countered By</div>
             <ul id="opickcountered" class="advant_lists"></ul>
         </div>
         <div class="rightbar-content">
