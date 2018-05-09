@@ -172,92 +172,91 @@
             chart.draw(data, chartOptions);
         }
         function updateGoodCounterSyn(event){
-            console.log(event.target.id)
-            if(event.target.id == "lpick"){
-                console.log(event.target)
-                // var heroes = $(event.target).children('li');
-                var $target = $(event.target);
-                var heroes = $target.children();
-                console.log(heroes);
-                var pickedList = _updatedList(heroes, pickedHeroes);
-                
-                console.log("new h: ", pickedList.newHeroes);
-                if(pickedList.changed){
-                    for (const iH in pickedList.newHeroes){
-                        var advantages = $("#" + pickedList.newHeroes[iH]).data("adv");
-                        console.log(advantages)
-                        for (const advantage in advantages){
-                            if(advantage in pickedAdvantages){
-                                pickedAdvantages[advantage] += advantages[advantage];
-                            }
-                            else{
-                                pickedAdvantages[advantage] = advantages[advantage];
-                            }
+            leftPicks = {'match': 'lpick', 'hstore': pickedHeroes, 'advs': pickedAdvantages,
+                         'gvs': '#pickgvs', 'countered': '#pickcountered'};
+            rightPicks = {'match': 'rpick', 'hstore': oPickedHeroes, 'advs': oPickedAdvantages,
+                         'gvs': '#opickgvs', 'countered': '#opickcountered'};
+            function _updateObj(inDict){
+                if(event.target.id == inDict.match){
+                    var $target = $(event.target);
+                    var heroes = $target.children();
+                    var pickedList = _updatedList(heroes, inDict.hstore);
+                    if(pickedList.changed){
+                        _updateAdvantages(pickedList.newHeroes, pickedList.removed, inDict.advs);
+                        // inDict.hstore = inDict.hstore.concat(pickedList.newHeroes);
+                        for (const iH in pickedList.newHeroes){
+                            inDict.hstore.push(pickedList.newHeroes[iH]);
                         }
-                        pickedHeroes.push(pickedList.newHeroes[iH])
+                        for (const iH in pickedList.removed){ 
+                            inDict.hstore.splice( $.inArray(pickedList.removed[iH], inDict.hstore), 1 );
+                        }
+                        // Create an array from the keys and sort it by the advantage value.
+                        var orderedList = Object.keys(inDict.advs).sort(function(a,b){
+                            return inDict.advs[b] - inDict.advs[a];
+                        });
+                        _doUpdate($(inDict.countered), orderedList.slice(0, advantageCut));
+                        _doUpdate($(inDict.gvs), orderedList.slice(-1*advantageCut).reverse());
                     }
-                    // Create an array from the keys and sort it by the advantage value.
-                    console.log(pickedAdvantages)
-                    var orderedList = Object.keys(pickedAdvantages).sort(function(a,b){
-                        return pickedAdvantages[b] - pickedAdvantages[a];
-                    })
-                    console.log(orderedList)
-                    _doUpdate($("#pickcountered"), orderedList.slice(0, advantageCut));
-                    _doUpdate($("#pickgvs"), orderedList.slice(-1*advantageCut).reverse());
+                    // _doUpdate($("#picksynergy"), heroes, "synergy");
+                    return true
                 }
-                // _doUpdate($("#picksynergy"), heroes, "synergy");
+                return false
             }
-            else if(event.target.id == "rpick"){
-                console.log(event.target)
-                // var heroes = $(event.target).children('li');
-                var $target = $(event.target);
-                var heroes = $target.children();
-                console.log(heroes);
-                var pickedList = _updatedList(heroes, oPickedHeroes);
-                
-                console.log("new h: ", pickedList.newHeroes);
-                if(pickedList.changed){
-                    for (const iH in pickedList.newHeroes){
-                        var advantages = $("#" + pickedList.newHeroes[iH]).data("adv");
-                        console.log(advantages)
-                        for (const advantage in advantages){
-                            if(advantage in oPickedAdvantages){
-                                oPickedAdvantages[advantage] += advantages[advantage];
-                            }
-                            else{
-                                oPickedAdvantages[advantage] = advantages[advantage];
-                            }
-                        }
-                        oPickedHeroes.push(pickedList.newHeroes[iH])
-                    }
-                    // Create an array from the keys and sort it by the advantage value.
-                    console.log(oPickedAdvantages)
-                    var orderedList = Object.keys(oPickedAdvantages).sort(function(a,b){
-                        return oPickedAdvantages[b] - oPickedAdvantages[a];
-                    })
-                    console.log(orderedList)
-                    _doUpdate($("#opickcountered"), orderedList.slice(0, advantageCut));
-                    _doUpdate($("#opickgvs"), orderedList.slice(-1*advantageCut).reverse());
-                }
-                // _doUpdate($("#opicksynergy"), heroes, "synergy");
+            if(_updateObj(leftPicks)){
+                return
+            }
+            else if(_updateObj(rightPicks)){
+                return
             }
             function _updatedList(heroes, current){
                 var changed = false;
                 var newHeroes = new Array();
-                console.log(heroes)
+                var heroList = new Array();
+                var removedHeroes = new Array();
                 heroes.each(function(h){
                     var h_id = heroes[h].id;
+                    heroList.push(h_id);
                     if($.inArray(h_id, current) != -1){
                         return;
                     }
                     changed = true;
                     newHeroes.push(h_id);
                 });
-                var output = {'changed': changed, 'newHeroes': newHeroes};
-                return output
+                // Check current hero list to ensure none were removed
+                for (const h in current){
+                    if($.inArray(current[h], heroList) == -1){
+                        changed = true;
+                        removedHeroes.push(current[h]);
+                    }
+                }
+                return {'changed': changed, 'newHeroes': newHeroes, 'removed': removedHeroes};            
+            }
+            function _updateAdvantages(added, removed, advTotal){
+                // console.log(added, removed);
+                for (const iH in added){
+                    var advantages = $("#" + added[iH]).data("adv");
+                    for (const advantage in advantages){
+                        if(advantage in advTotal){
+                            advTotal[advantage] += advantages[advantage];
+                        }
+                        else{
+                            advTotal[advantage] = advantages[advantage];
+                        }
+                    }
+                }
+                for (const iH in removed){
+                    var advantages = $("#" + removed[iH]).data("adv");
+                    for (const advantage in advantages){
+                        advTotal[advantage] -= advantages[advantage];
+                        if(advTotal[advantage] < 0.001 || isNaN(advTotal[advantage])){
+                            delete(advTotal[advantage]);
+                        }
+                    }
+                    
+                }
             }
             function _doUpdate(target, advantages){
-                console.log(advantages)
+                // console.log(advantages)
                 //Empty list and add our new heroes
                 target.empty();
                 for (const h in advantages){
