@@ -103,7 +103,7 @@
                 update: function(event, ui){updatePBChart(event); updateGoodCounterSyn(event);}
             })
             //Setup hero tooltips.
-            $(document).tooltip({
+            $(".content").tooltip({
                 items: ".d2mh",
                 content:function(){
                     var data = $(this).parent().data("data");
@@ -120,6 +120,22 @@
                     return html
                 }
             })
+            $("#pickgvs, #pickcountered").tooltip({
+                items: ".d2mh",
+                content:function(){
+                    var hero = $(this).attr("class").split(" ")[1];
+                    var html = counterTooltip(pickedHeroes, hero)
+                    return html
+                }
+            })
+            $("#opickgvs, #opickcountered").tooltip({
+                items: ".d2mh",
+                content:function(){
+                    var hero = $(this).attr("class").split(" ")[1];
+                    var html = counterTooltip(oPickedHeroes, hero)
+                    return html
+                }
+            })
             //Setup google charts and draw placeholders.
             google.charts.load('current', {packages: ['corechart', 'bar']});
             google.charts.setOnLoadCallback(drawBasic);
@@ -127,6 +143,32 @@
             $("#hsearch").on("change", function(o, a){updateHeroHigh();});
             $("#hsearch").val("");
         } );
+        function counterTooltip(heroList, vsHero){
+            var hero = $("#" + vsHero).data("hero");
+            var html = "<table width=200>\n";
+            var total = 0;
+            html += "<tr><th colspan='2'>" + hero + "</th></tr>\n";
+            for (const iH in heroList){
+                var advantages = $("#" + heroList[iH]).data("adv");
+                var imgName = "d2mh " + heroList[iH];
+                var icon = "<i class = '" + imgName + "'></i>"
+                html += "<tr>\n";
+                html += "<td>" + icon + "</td>\n";
+                if(!(vsHero in advantages)){
+                    html += "<td align='right'>" + "No Data" + "</td>\n";
+                }
+                else{
+                    html += "<td align='right'>" + (10*advantages[vsHero]).toFixed(1) + "</td>\n";
+                    total += 10*advantages[vsHero];
+                }
+                html += "</tr>\n";
+            }
+            html += "<tr>\n" + "<td colspan='2'><hr/></td>" + "<tr>\n";
+            html += "<tr>\n" + "<td>Total</td>";
+            html += "<td align='right'>" + total.toFixed(1) + "</td>" + "<tr>\n";
+            html += "</table>\n";
+            return html
+        }
         function updateHeroHigh(){
             $(".hero_list_highlight").removeClass("hero_list_highlight")
             var search = $("#hsearch").val();
